@@ -1,4 +1,38 @@
-Home Page
-<!-- Anchors (links) -->
-<a ng-href="#!/about" class="button">Learn More</a>
-<a ng-href="#!/404" class="button">View All Features</a>
+    <div class="">
+      <ul class="menu">
+        <li><a class="button" href="#!/example">Example</a></li>
+        <li><button class="button" data-open="CreateModal">New Event</button></li>
+        <li><button class="button" data-open="JoinModal">Join Event</button></li>
+        <li><button class="button" data-open="ContactModal">Contact</button></li>
+      </ul>
+    </div>
+
+  <!-- Contact Modal -->
+  <div class="reveal" id="ContactModal" data-reveal>
+    <h1>Awesome. I Have It.</h1>
+    <p class="lead">Your couch. It is mine.</p>
+    <p>Now Begone, this is not for your brains.</p>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+<!-- Create Modal -->
+  <div class="reveal" id="CreateModal" data-reveal>
+    Create Modal
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+<!-- Join Modal -->
+  <div class="reveal" id="JoinModal" data-reveal>
+    Join Modal
+    <a class="button" data-close aria-label="Close modal" ng-href="#!/about">Join Event</a>
+    <button class="close-button" data-close aria-label="Close modal" type="button">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<div>
+  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+</div>

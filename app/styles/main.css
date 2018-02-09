@@ -1,10 +1,9 @@
-.browsehappy {
-  margin: 0.2em 0;
-  background: #ccc;
-  color: #000;
-  padding: 0.2em 0;
-}
-
 div {
     border: 0.1px solid #000;
+}
+
+/*Foundation overwrites*/
+
+.menu_modal_button {
+	margin-bottom: 0px !important;
 }

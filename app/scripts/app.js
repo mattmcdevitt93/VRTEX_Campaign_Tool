@@ -29,6 +29,11 @@
     controller: 'AboutCtrl',
     controllerAs: 'about'
   })
+  .when('/example', {
+    templateUrl: 'views/example.html',
+    controller: 'ExampleCtrl',
+    controllerAs: 'example'
+  })
   .when('/404', {
     templateUrl: '404.html',
     controller: '404Controller'
