@@ -7,11 +7,10 @@
  * # MainCtrl
  * Controller of the vrtexCampaignToolApp
  */
-angular.module('vrtexCampaignToolApp')
-  .controller('MainCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+ angular.module('vrtexCampaignToolApp')
+ .controller('MainCtrl', function ($scope) {
+ 	$scope.$on('$viewContentLoaded', function() {
+ 		console.log('Main Ready!');
+ 		$(document).foundation();
+ 	});
+ });

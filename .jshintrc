@@ -1,3 +1,5 @@
+/* jshint -W079 */
+
 {
   "bitwise": true,
   "browser": true,
@@ -10,6 +12,7 @@
   "strict": true,
   "undef": true,
   "unused": true,
+  "predef": [ "-module" ],
   "globals": {
     "angular": false,
     "$": false

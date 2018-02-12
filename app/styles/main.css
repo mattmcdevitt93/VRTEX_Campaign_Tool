@@ -1,9 +1,50 @@
 div {
-    border: 0.1px solid #000;
+    /*border: 0.1px solid #000;*/
+}
+
+.center {
+	margin: auto;
+}
+
+.hidden {
+	visibility: hidden;
+	display: none;
 }
 
 /*Foundation overwrites*/
 
+.views {
+	margin-left: 15px;
+	margin-right: 15px
+}
+
 .menu_modal_button {
 	margin-bottom: 0px !important;
+}
+
+.menu-button  {
+	padding: 0px;
+	margin: 0px;
+}
+
+/* Custom Classes */
+/*Home Page*/
+
+/* Create Modal */
+
+/* Loading Icon */
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+    margin-top: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
