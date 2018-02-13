@@ -50,8 +50,8 @@ module.drawCampaignList = function(data) {
 		    console.log(v2); // v2 is alliance data
 		    console.log("Passed Data: "); // v3 is passed in data
 		    console.log(v3); // v3 is passed in data
-		    debugger
-		    $("<div id='event_" + index + "' class='card'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: WIP</span> </div> <div class='card-section'> <span>Structure Owner: TICKER</span> <div class='button-group float-right'> <a class='button'>Hide</a> <a class='button'>Map</a> <a class='button success'>Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );
+		    
+		    $("<div id='event_" + index + "' class='card'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: <span class='capitalize'>" + v3.event_type.replace("_", " ") + "</span></span> </div> <div class='card-section'> <span>Structure Owner: " + v2[0].name + "</span> <div class='button-group float-right'> <a class='button'>Hide</a> <a class='button'>Map</a> <a class='button success'>Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );
 
 });
 

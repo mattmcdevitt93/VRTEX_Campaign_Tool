@@ -22,10 +22,15 @@ div {
 	margin-bottom: 0px !important;
 }
 
-.menu-button  {
-	padding: 0px;
+.menuButton  {
 	margin: 0px;
+	max-height: 45px !important;
 }
+
+.capitalize {
+	text-transform:capitalize;
+}
+
 
 /* Custom Classes */
 /*Home Page*/
