@@ -8,10 +8,8 @@
  * Controller of the vrtexCampaignToolApp
  */
 angular.module('vrtexCampaignToolApp')
-  .controller('ExampleCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+  .controller('ExampleCtrl', function ($scope) {
+ 	$scope.$on('$viewContentLoaded', function() {
+ 		console.log('Example Ready!');
+ 	});
   });

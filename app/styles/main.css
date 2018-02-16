@@ -18,7 +18,7 @@ div {
 	margin-right: 15px
 }
 
-.menu_modal_button {
+.button {
 	margin-bottom: 0px !important;
 }
 
@@ -35,7 +35,11 @@ div {
 /* Custom Classes */
 /*Home Page*/
 
-/* Create Modal */
+/* Login Modal */
+
+/*input[type=text] {
+    border: 2px solid red;
+}*/
 
 /* Loading Icon */
 .loader {
@@ -52,4 +56,28 @@ div {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Firebase CSS Flags */
+
+.loggedanonFlag {
+	border-left: 15px solid #ffae00;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-radius: 10px 0px 0px 10px;
+}
+
+.loggedinFlag {
+	border-left: 15px solid #3adb76;
+	border-top: 0px;
+	border-bottom: 0px;
+	border-radius: 10px 0px 0px 10px;
+}
+
+.loggedoutFlag {
+	border-top: 0px;
+	border-bottom: 0px;
+	border-radius: 10px 0px 0px 10px;
+	border-left: 15px solid #cc4b37;
+
 }

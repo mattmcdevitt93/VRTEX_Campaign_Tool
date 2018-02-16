@@ -1,5 +1,5 @@
 'use strict';
-
+var module = module || {};
 /**
  * @ngdoc overview
  * @name vrtexCampaignToolApp
@@ -41,5 +41,12 @@
   .otherwise({
     redirectTo: '/'
   });
-
+}).run(function($rootScope) {
+    $rootScope.$on('$viewContentLoaded', function () {
+        console.log('loaded!');
+        $(document).foundation();
+        // module.bindings();
+    });
 });
+
+
