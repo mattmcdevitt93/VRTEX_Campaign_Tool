@@ -11,6 +11,5 @@
  .controller('MainCtrl', function ($scope) {
  	$scope.$on('$viewContentLoaded', function() {
  		console.log('Main Ready!');
- 		$(document).foundation();
  	});
  });

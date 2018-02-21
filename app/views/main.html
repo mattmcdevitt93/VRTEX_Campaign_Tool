@@ -1,38 +1,40 @@
 
 <div class='cell small-6 '>
-  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </div>
 
 <div class="cell stacked button-group small-6">
-  <a href="#!/example" class='button menuButton'>Example</a>
-  <a class="button menuButton" data-open="CreateModal" id='newEventButton'>New Event</a>
-  <a class="button menuButton" data-open="JoinModal">Join Event</a>
-  <a class="button menuButton" data-open="ContactModal">Contact</a>
+	<a class="button menuButton" data-open="CreateModal" id='newEventButton'>New Event</a>
+	<a class="button menuButton" data-open="JoinModal">Join Event</a>
+	<a class="button menuButton" data-open="ContactModal">Contact</a>
+	<a href="#!/example" class='button menuButton'>Example</a>
 
 </div>
 
 <div class='cell small-6 medium-12'>
-  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+	Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 </div>
 
 <!-- Modals -->
 
 <!-- Contact Modal -->
 <div class="reveal" id="ContactModal" data-reveal>
-  <h1>Awesome. I Have It.</h1>
-  <p class="lead">Your couch. It is mine.</p>
-  <p>Now Begone, this is not for your brains.</p>
-  <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
+	<h1>Awesome. I Have It.</h1>
+	<p class="lead">Your couch. It is mine.</p>
+	<p>Now Begone, this is not for your brains.</p>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
 </div>
 
 <!-- Create Modal -->
 <div class="reveal" id="CreateModal" data-reveal>
-  <div class="center" ><h3>Create New Room</h3></div>
-  <input class="center" type="text">
-  <div class="loader"></div>
-  <div id='CreateModalData'></div>
+	<div class="">Create New Room
+		<button class='button' onclick=module.loadCampaignList() > Refresh List</button>
+	</div>
+	<input id='createModalSearch' class="center" type="text" placeholder="System Search">
+	<div class="loader"></div>
+	<div id='CreateModalData'></div>
 
 <!--   <div id='event_1' class='card'>
     <div class='card-divider'>
@@ -49,15 +51,15 @@
   </div> -->
 
   <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
+  	<span aria-hidden="true">&times;</span>
   </button>
 </div>
 
 <!-- Join Modal -->
 <div class="reveal" id="JoinModal" data-reveal>
-  Join Modal
-  <a class="button" data-close aria-label="Close modal" ng-href="#!/about">Join Event</a>
-  <button class="close-button" data-close aria-label="Close modal" type="button">
-    <span aria-hidden="true">&times;</span>
-  </button>
+	Join Event
+	<a class="button" data-close aria-label="Close modal" ng-href="#!/about">Join Event</a>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
 </div>
