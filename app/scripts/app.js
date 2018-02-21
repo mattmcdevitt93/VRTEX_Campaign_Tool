@@ -43,7 +43,7 @@ var module = module || {};
   });
 }).run(function($rootScope) {
     $rootScope.$on('$viewContentLoaded', function () {
-        console.log('loaded!');
+        console.log('Angular Loaded!');
         $(document).foundation();
         // module.bindings();
     });

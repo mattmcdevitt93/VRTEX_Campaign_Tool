@@ -24,7 +24,7 @@
 				<li><a class="menu-text" href="#/">Vrtex Campaign Tool</a></li>
 			</ul>
 		</div>
-		<!-- <div id='loggedInAsIcon' >Logged in</div> -->
+		<div id='loggedInAsIcon' class='button float-right small-12 medium-3'><span class='displayName'></span></div>
 		<div id='menu_modal_button' class="button cell small-12 medium-3 large-1" data-open="MenuModal">Menu</div>
 
 	</div>
@@ -34,8 +34,8 @@
 		Menu Modal 
 		<a id='homeButton' class="button cell small-12 menu_modal_button" href="#/" data-close aria-label="Close modal">Home</a>
 		<div id='signinButton' class="button cell small-12 menu_modal_button" data-open="LoginModal">Sign-in</div>
-		<div id='current_user' class="button success cell small-12 menu_modal_button">Signed in as: <span class='current_user_email'></span></div>
-		<div id='anon_user' class="button warning cell small-12 menu_modal_button">Signed in as: Anonymous Coward</div>
+		<div id='current_user' class="button success cell small-12 menu_modal_button" data-open="UserSettingsModal">Signed in as: <span class='displayName'></span></div>
+		<div id='anon_user' class="button warning cell small-12 menu_modal_button" data-open="UserSettingsModal">Signed in as: <span class='displayName'></span></div>
 		<div id='signoutButton' class="button alert cell small-12 menu_modal_button" data-close aria-label="Close modal">Sign-out</div>
 
 		<button class="close-button" data-close aria-label="Close modal" type="button">
@@ -59,6 +59,19 @@
 			<span aria-hidden="true">&times;</span>
 		</button>
 	</div>
+
+<!-- User Settings Modal -->
+<div class="reveal" id="UserSettingsModal" data-reveal>
+	Settings Modal
+	<div class="card settingMenuCard">
+	Display Name:
+	<input id='displayNameUpdate' class="center cell small-11" type="text">
+	<div id='displayNameUpdateButton' class="button cell small-1">Update</div>
+	</div>
+	<button class="close-button" data-close aria-label="Close modal" type="button">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
 
 	<!-- Current View -->
 	<div id='ng-view' ng-view="" class='grid-x grid-margin-x views'></div>
@@ -92,6 +105,7 @@
 	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 	<script src="bower_components/angular-touch/angular-touch.js"></script>
 	<script src="bower_components/firebase/firebase.js"></script>
+	<script src="bower_components/js-cookie/src/js.cookie.js"></script>
 	<!-- endbower -->
 	<!-- endbuild -->
 

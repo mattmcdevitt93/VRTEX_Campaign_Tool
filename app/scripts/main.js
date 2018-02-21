@@ -5,6 +5,7 @@
 var module = module || {};
 var firebase = firebase || {};
 var config = config || {};
+var Cookies = Cookies || {};
 
 function testData(data) {
 	firebase.database().ref().set({
@@ -12,12 +13,22 @@ function testData(data) {
 	});
 }
 
+module.urlParams = function(name) {
+	var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (results===null){
+		return null;
+	}
+	else{
+		return decodeURI(results[1]) || 0;
+	}
+};
+
 // ================================================
 // Document Ready
 // ================================================
 
 $(document).ready(function() {
-	console.log('Ready!');
+	console.log('Document Ready!');
 	firebase.initializeApp(config);
 	module.bindings();
 	// $(document).foundation();
@@ -41,21 +52,30 @@ module.bindings = function() {
 			module.firebaseLogin();
 		});
 
+		// Anonomous Login (Sets temp display name)
 		$('#anonloginButton').click(function(){
 			console.log('Anon Login Attempt');
 			module.firebaseAnonLogin();
 		});
 
+		// Create New Account
 		$('#signupButton').click(function(){
 			console.log('Sign up Attempt');
 			module.firebaseCreate();
 		});
 
+		// Sign out
 		$('#signoutButton').click(function(){
 			console.log('Sign out Attempt');
 			module.firebaseSignOut();
 		});
 
+
+		// Update Settings Menu field
+		$('#displayNameUpdateButton').click(function(){
+			console.log('Update Display Attempt:' + $('#displayNameUpdate').val());
+			module.setNewDisplayName($('#displayNameUpdate').val(),null , true);
+		});
 
 		// Search Campaign list, passes current text when field is updated
 		$('#createModalSearch').on('input', function() { 
@@ -80,34 +100,58 @@ module.bindings = function() {
 			// debugger
 			// module.current_user = user;
 			if (isAnonymous === true) {
-			$('#menu_modal_button').removeClass('loggedoutFlag');
-			$('#menu_modal_button').removeClass('loggedinFlag');
-			$('#menu_modal_button').addClass('loggedanonFlag');
-			$('#anon_user').removeClass('hidden');
-			$('#current_user').addClass('hidden');
+				$('#loggedInAsIcon').removeClass('loggedoutFlag');
+				$('#loggedInAsIcon').removeClass('loggedinFlag');
+				$('#loggedInAsIcon').addClass('loggedanonFlag');
+				$('#anon_user').removeClass('hidden');
+				$('#current_user').addClass('hidden');
+
+				// Set Display name if not set
+				if (user.displayName === undefined || user.displayName === null || user.displayName === '') {
+					console.log('Display Name Reset');
+					module.setNewDisplayName(null, true);
+				}
 			} else {
-			$('#menu_modal_button').removeClass('loggedoutFlag');
-			$('#menu_modal_button').addClass('loggedinFlag');
-			$('#menu_modal_button').removeClass('loggedanonFlag');
-			$('#anon_user').addClass('hidden');
-			$('#current_user').removeClass('hidden');
-			$('.current_user_email').text(user.email);
+				$('#loggedInAsIcon').removeClass('loggedoutFlag');
+				$('#loggedInAsIcon').addClass('loggedinFlag');
+				$('#loggedInAsIcon').removeClass('loggedanonFlag');
+				$('#anon_user').addClass('hidden');
+				$('#current_user').removeClass('hidden');
+
+				if (typeof user.displayName === 'undefined') {
+					module.setNewDisplayName(user.email.replace(/@[^@]+$/, '', false));
+				}
+
+
 			}
-			$('#signinButton').addClass('hidden');
-			$('#signoutButton').removeClass('hidden');
+		// Update Login Buttons and close modals
+		$('#signinButton').addClass('hidden');
+		$('#signoutButton').removeClass('hidden');
+		$('#loggedInAsIcon').attr('data-open', 'UserSettingsModal');
 
 
-		} else {
-			console.log('Signed-Out');
+		// // Update Display Name in Settings fields
+		// $('.displayName').text(user.displayName);
+		// // $('#loggedInAsIcon').text(user.displayName);
+		// $('#displayNameUpdate').val(user.displayName);
+		// console.log('Display Name: ' + user.displayName);
+		module.updateDisplayNames(user.displayName);
+
+
+
+	} else {
+		console.log('Signed-Out');
 			// User is signed out.
 			// ...
-			$('#menu_modal_button').addClass('loggedoutFlag');
-			$('#menu_modal_button').removeClass('loggedinFlag');
-			$('#menu_modal_button').removeClass('loggedanonFlag');
+			$('#loggedInAsIcon').addClass('loggedoutFlag');
+			$('#loggedInAsIcon').removeClass('loggedinFlag');
+			$('#loggedInAsIcon').removeClass('loggedanonFlag');
 			$('#anon_user').addClass('hidden');
 			$('#current_user').addClass('hidden');
 			$('#signoutButton').addClass('hidden');
 			$('#signinButton').removeClass('hidden');
+			$('#loggedInAsIcon').text('Signed-Out');
+			$('#loggedInAsIcon').removeAttr('data-open');
 
 		}
 	});
@@ -122,8 +166,6 @@ module.bindings = function() {
 module.firebaseLogin = function() {
 	var email = $('#loginUsername').val();
 	var password = $('#loginPassword').val();
-	console.log(email + ' | ' + password);
-
 	firebase.auth().signInWithEmailAndPassword(email, password).catch(
 		function(error) {
 	// Handle Errors here.
@@ -131,8 +173,8 @@ module.firebaseLogin = function() {
 	var errorMessage = error.message;
 	console.log('Login Error:' + error.message);
 	$('#loginerrorlog').text(error.message);
+});
 
-	});
 };
 
 module.firebaseCreate = function() {
@@ -146,7 +188,7 @@ module.firebaseCreate = function() {
 	var errorMessage = error.message;
 	console.log('Create Account:' + error.message);
 	$('#loginerrorlog').text(error.message);
-	});
+});
 };
 
 module.firebaseCurrentUser = function() {
@@ -165,10 +207,10 @@ module.firebaseSignOut = function() {
 
 module.firebaseAnonLogin = function() {
 	firebase.auth().signInAnonymously().catch(function(error) {
-	var errorCode = error.code;
-	var errorMessage = error.message;
-	console.log('Anon Error:' + error.message);
-	$('#loginerrorlog').text(error.message);
+		var errorCode = error.code;
+		var errorMessage = error.message;
+		console.log('Anon Error:' + error.message);
+		$('#loginerrorlog').text(error.message);
 	});
 };
 
@@ -207,14 +249,14 @@ module.drawCampaignList = function(data) {
 		// console.log('=====================');
 		// console.log('index: ' + index ); // v1 is system data
 		//    console.log('System data: '); // v1 is system data
-		//    console.log(v1 ); // v1 is system data
+		   // console.log(v1 ); // v1 is system data
 		//    console.log('Alliance data: '); // v2 is alliance data
-		//    console.log(v2); // v2 is alliance data
+		   // console.log(v2); // v2 is alliance data
 		//    console.log('Passed Data: '); // v3 is passed in data
-		//    console.log(v3); // v3 is passed in data
-		var d = new Date(v3.start_time);
+		   // console.log(v3); // v3 is passed in data
+		   var d = new Date(v3.start_time);
 		// Draw Create Modal Card
-		$("<div id='event_" + index + "' class='card " + v1[0].name + "'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: <span class='capitalize'>" + v3.event_type.replace("_", " ") + "</span></span> </div> <div class='card-section'> <div>Structure Owner: " + v2[0].name + "</div> <div>Start time: " + d.toUTCString()+ "</div> <div class='button-group float-right'> <a class='button' onclick=module.addHidden(\'event_" + index +  "\') >Hide</a> <a class='button'>Map</a> <a class='button success eventCreate' onclick=module.startCampaignTool(" + v3.campaign_id + ") href='#!/example' data-close aria-label='Close modal' >Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );  // jshint ignore:line
+		$("<div id='event_" + index + "' class='card " + v1[0].name + "'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: <span class='capitalize'>" + v3.event_type.replace("_", " ") + "</span></span> </div> <div class='card-section'> <div>Structure Owner: " + v2[0].name + "</div> <div>Start time: " + d.toUTCString()+ "</div> <div class='button-group float-right'> <a class='button' onclick=module.addHidden(\'event_" + index +  "\') >Hide</a> <a class='button'>Map</a> <a class='button success eventCreate' onclick=module.startCampaignTool(" + v3.campaign_id + ") href='#!/example?s=" + v3.campaign_id + "' data-close aria-label='Close modal' >Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );  // jshint ignore:line
 	});
 
 
@@ -247,6 +289,80 @@ module.addHidden = function(id) {
 	console.log('Add Hidden to: ' + id);
 	var element = '#'+id.toString();
 	$(element).addClass('hidden');
+};
+// 
+// 	Junk code - Failed attempt of storing display name in cookie, Firebase has that as a native function.
+// 
+// module.getDisplayName = function(name) {
+// 	console.log('Get Display Name: ' + name);
+// 	var user = firebase.auth().currentUser;
+// 	// Check if Firebase is not set up, if fails skip everything.
+// 	if (user !== undefined || user !== null || user !== '') {
+// 		// Check if name exists, if it does go direct to display name set.
+// 		if (name === undefined || name === null || name === '') {
+// 			console.log('Get valid Display Name');
+// 			console.log(Cookies.get(user.uid));
+// 			if (Cookies.get(user.uid) === undefined) {
+// 				module.setNewDisplayName(user.uid, user.email.replace(/@[^@]+$/, ''));
+// 			} else {
+// 				return Cookies.get(user.uid);
+// 			}
+// 		} else {
+// 			console.log('Update Display Name');
+// 			if (user.isAnonymous === false) {
+// 				Cookies.set(user.uid, name);
+// 			}
+// 			module.setNewDisplayName(user.uid, name);
+// 		}
+// 	} else {
+// 		console.log('Firebase Error!');
+// 	}
+
+// };
+
+module.setNewDisplayName = function(name, anon, reload) {
+	console.log('Display Name to Set:' + name);
+	var user = firebase.auth().currentUser;
+	if (name !== null) {
+		user.updateProfile({
+			displayName: name,
+		}).then(function() {
+			console.log('Display Name Set');
+			if (reload === true) {
+				location.reload();
+			}
+		}).catch(function(error) {
+			console.log('Display Name Error: ' + error);
+			if (reload === true) {
+				location.reload();
+			}
+		});
+	} else {
+		console.log('Random Name Set');
+		if (anon === true) {
+			var nameList = ['Anonymousl Coward', 'Filthy Casaual', 'Nameless Noob', 'Fun Vampire', 'Dirty Lurker', 'Hairy Larry'];
+			var tempName = nameList[Math.floor(Math.random()*nameList.length)] + ' #' + (Math.floor(Math.random() * (999 - 100) ).toString());
+			console.log('Name Set: '+ tempName);
+			module.setNewDisplayName(tempName, anon, true);
+		}
+	}
+
+};
+
+module.updateDisplayNames = function (name) {
+	// console.log('update DisplayName: ' + name);
+	if (name === undefined) {
+		var user = firebase.auth().currentUser;
+		$('.displayName').text(user.displayName);
+		$('#displayNameUpdate').val(user.displayName);
+		$('#loggedInAsIcon').text(user.displayName);
+
+	} else {
+		$('.displayName').text(name);
+		$('#displayNameUpdate').val(name);	
+		$('#loggedInAsIcon').text(name);
+	}
+
 };
 
 // ================================================
