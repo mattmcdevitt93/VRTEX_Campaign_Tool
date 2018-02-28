@@ -34,6 +34,11 @@ var module = module || {};
     controller: 'ExampleCtrl',
     controllerAs: 'example'
   })
+  .when('/app', {
+    templateUrl: 'views/app.html',
+    controller: 'AppCtrl',
+    controllerAs: 'app'
+  })
   .when('/404', {
     templateUrl: '404.html',
     controller: '404Controller'

@@ -12,6 +12,6 @@ angular.module('vrtexCampaignToolApp')
   .controller('ExampleCtrl', function ($scope) {
  	$scope.$on('$viewContentLoaded', function() {
  		console.log('Example Ready!');
- 		console.log(module.urlParams('s'));
+ 		// console.log(module.urlParams('s'));
  	});
   });

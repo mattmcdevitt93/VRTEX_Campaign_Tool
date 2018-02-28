@@ -30,9 +30,11 @@ module.urlParams = function(name) {
 $(document).ready(function() {
 	console.log('Document Ready!');
 	firebase.initializeApp(config);
+	module.firebaseRef = firebase.database().ref();
 	module.bindings();
 	// $(document).foundation();
-	testData(1);
+	// module.postBinding();
+	// testData(1);
 });
 
 // ================================================
@@ -74,7 +76,7 @@ module.bindings = function() {
 		// Update Settings Menu field
 		$('#displayNameUpdateButton').click(function(){
 			console.log('Update Display Attempt:' + $('#displayNameUpdate').val());
-			module.setNewDisplayName($('#displayNameUpdate').val(),null , true);
+			module.setNewDisplayName($('#displayNameUpdate').val(),null , false);
 		});
 
 		// Search Campaign list, passes current text when field is updated
@@ -112,14 +114,15 @@ module.bindings = function() {
 					module.setNewDisplayName(null, true);
 				}
 			} else {
+				// User has an email and is a registered user
 				$('#loggedInAsIcon').removeClass('loggedoutFlag');
 				$('#loggedInAsIcon').addClass('loggedinFlag');
 				$('#loggedInAsIcon').removeClass('loggedanonFlag');
 				$('#anon_user').addClass('hidden');
 				$('#current_user').removeClass('hidden');
-
-				if (typeof user.displayName === 'undefined') {
+				if (user.displayName === null) {
 					module.setNewDisplayName(user.email.replace(/@[^@]+$/, '', false));
+
 				}
 
 
@@ -156,7 +159,6 @@ module.bindings = function() {
 		}
 	});
 
-
 	};
 
 // ================================================
@@ -189,6 +191,7 @@ module.firebaseCreate = function() {
 	console.log('Create Account:' + error.message);
 	$('#loginerrorlog').text(error.message);
 });
+
 };
 
 module.firebaseCurrentUser = function() {
@@ -221,13 +224,30 @@ module.firebaseAnonLogin = function() {
 // searchCampaignList - Adds and removes the hidden CSS tag to narrow the list
 // ================================================
 
-module.loadCampaignList = function () {
-	$.ajax({url: 'https://esi.tech.ccp.is/latest/sovereignty/campaigns/?datasource=tranquility', success: function(result){
-		console.log('Ajax');
-		// console.log(result);
-		module.campaignList = result;
-		module.drawCampaignList(result);
+module.loadCampaignList = function (id) {
+	if (id === undefined) {
+		$.ajax({url: 'https://esi.tech.ccp.is/latest/sovereignty/campaigns/?datasource=tranquility', success: function(result){
+			console.log('Ajax');
+			// console.log(result);
+			module.campaignList = result;
+			module.drawCampaignList(result);
+		}});
+	} else {
+		$.ajax({url: 'https://esi.tech.ccp.is/latest/sovereignty/campaigns/?datasource=tranquility', success: function(result){
+			console.log('Ajax');
+			// console.log('Find Result:' + id);
+		// console.log('Results: ' + result);
+		var resultPush = [];
+		for (var i = result.length - 1; i >= 0; i--) {
+			// console.log('Campaign ID: ' + i + ' | ' + result[i].campaign_id);
+			if (id === result[i].campaign_id) {
+				resultPush.push(result[i]);
+			}
+		}
+		return resultPush[0];
 	}});
+	}
+
 };
 
 module.drawCampaignList = function(data) {
@@ -256,7 +276,8 @@ module.drawCampaignList = function(data) {
 		   // console.log(v3); // v3 is passed in data
 		   var d = new Date(v3.start_time);
 		// Draw Create Modal Card
-		$("<div id='event_" + index + "' class='card " + v1[0].name + "'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: <span class='capitalize'>" + v3.event_type.replace("_", " ") + "</span></span> </div> <div class='card-section'> <div>Structure Owner: " + v2[0].name + "</div> <div>Start time: " + d.toUTCString()+ "</div> <div class='button-group float-right'> <a class='button' onclick=module.addHidden(\'event_" + index +  "\') >Hide</a> <a class='button'>Map</a> <a class='button success eventCreate' onclick=module.startCampaignTool(" + v3.campaign_id + ") href='#!/example?s=" + v3.campaign_id + "' data-close aria-label='Close modal' >Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );  // jshint ignore:line
+		// Currently Start button is directing to Example.html
+		$("<div id='event_" + index + "' class='card " + v1[0].name + "'> <div class='card-divider'> <span>System Name: " + v1[0].name + " | Target Structure: <span class='capitalize'>" + v3.event_type.replace("_", " ") + "</span></span> </div> <div class='card-section'> <div>Structure Owner: " + v2[0].name + "</div> <div>Start time: " + d.toUTCString()+ "</div> <div class='button-group float-right'> <a class='button' onclick=module.addHidden(\'event_" + index +  "\') >Hide</a> <a class='button'>Map</a> <a class='button success eventCreate' onclick=module.startCampaignTool(" + v3.campaign_id + ") href='#!/app' data-close aria-label='Close modal' >Start</a> </div> </div> </div>").appendTo( "#CreateModalData" );  // jshint ignore:line
 	});
 
 
@@ -290,35 +311,6 @@ module.addHidden = function(id) {
 	var element = '#'+id.toString();
 	$(element).addClass('hidden');
 };
-// 
-// 	Junk code - Failed attempt of storing display name in cookie, Firebase has that as a native function.
-// 
-// module.getDisplayName = function(name) {
-// 	console.log('Get Display Name: ' + name);
-// 	var user = firebase.auth().currentUser;
-// 	// Check if Firebase is not set up, if fails skip everything.
-// 	if (user !== undefined || user !== null || user !== '') {
-// 		// Check if name exists, if it does go direct to display name set.
-// 		if (name === undefined || name === null || name === '') {
-// 			console.log('Get valid Display Name');
-// 			console.log(Cookies.get(user.uid));
-// 			if (Cookies.get(user.uid) === undefined) {
-// 				module.setNewDisplayName(user.uid, user.email.replace(/@[^@]+$/, ''));
-// 			} else {
-// 				return Cookies.get(user.uid);
-// 			}
-// 		} else {
-// 			console.log('Update Display Name');
-// 			if (user.isAnonymous === false) {
-// 				Cookies.set(user.uid, name);
-// 			}
-// 			module.setNewDisplayName(user.uid, name);
-// 		}
-// 	} else {
-// 		console.log('Firebase Error!');
-// 	}
-
-// };
 
 module.setNewDisplayName = function(name, anon, reload) {
 	console.log('Display Name to Set:' + name);
@@ -328,6 +320,7 @@ module.setNewDisplayName = function(name, anon, reload) {
 			displayName: name,
 		}).then(function() {
 			console.log('Display Name Set');
+			module.updateDisplayNames(user.displayName);
 			if (reload === true) {
 				location.reload();
 			}
@@ -375,8 +368,139 @@ module.startCampaignTool = function(campaingId) {
 		console.log('Error: No user Logged in');
 		// $window.location.href= '/';
 	} else {
-		console.log(firebase.auth().currentUser.uid);
-		console.log('Start New Session for: ' + campaingId);
+		console.log('===================');
+		var current_user = firebase.auth().currentUser;
+		console.log('Current User: ' + current_user.uid);
+		var d1 = current_user;
+		console.log('Campaign ID: ' + campaingId);
+
+
+		var d2 = $.ajax({url: 'https://esi.tech.ccp.is/latest/sovereignty/campaigns/?datasource=tranquility', success: function(result){
+			console.log('Ajax');
+			console.log('Find Result:' + campaingId);
+			// console.log('Results: ' + result);
+		}});
+
+		console.log('Campaign Data: ' + d2);
+		console.log('Create Firebase Object for new Event');
+
+		$.when(d1, d2, d3).then(function (v1, v2, v3) {
+		// console.log('=====================');
+		// console.log('index: ' + index ); // v1 is system data
+		//    console.log('System data: '); // v1 is system data
+		// console.log(v1); // v1 is user data
+		//    console.log('Alliance data: '); // v2 is alliance data
+		// console.log(v2[0]); // v2 is campaign data
+		//    console.log('Passed Data: '); // v3 is passed in data
+		// console.log(v3); // v3 is passed in data
+		// var d = new Date(v3.start_time);
+		// Draw Create Modal Card
+		// Currently Start button is directing to Example.html
+
+		var resultPush = [];
+			for (var i = v2[0].length - 1; i >= 0; i--) {
+				// console.log('Campaign ID: ' + i + ' | ' + v2[0][i].campaign_id);
+				if (campaingId === v2[0][i].campaign_id) {
+					resultPush.push(v2[0][i]);
+					// console.log('Campaign ID: Match');
+				}
+			}
+		var a2 = resultPush[0];
+		// console.log('current Campaign: ' + a2);
+
+		var newSession = {
+			data: { 
+				creatingUser: v1.uid,
+				currentOwner: v1.uid, 
+				campaingId: a2.campaign_id,
+				attackersScore: a2.attackers_score,
+				defenderScore: a2.defender_score,
+				constellationId: a2.constellation_id,
+				defenderId: a2.defender_id,
+				eventType: a2.event_type,
+				solarSystem_id: a2.solar_system_id,
+				startTime: a2.start_time,
+				structureId: a2.structure_id
+				}, 
+
+				users: {
+					[v1.uid]: {
+						displayName: v1.displayName
+					}
+				}, 
+				log: {
+					0: {
+						type: 'Initial Log!'
+					}
+				},
+				nodes: {
+					0: {
+						type: 'Initial Event!'
+					}
+				}
+
+			};
+			var refKey = module.firebaseRef.push(newSession);
+
+			console.log('Firebase Key:' + refKey.key);
+		});
+
+
+
+
+
+
+
+
+		// var newSession = {
+		// 	data: { 
+		// 		creatingUser: current_user.uid,
+		// 		currentOwner: current_user.uid, 
+		// 		campaingId: campaingId }, 
+		// 	users: {
+		// 		[current_user.uid]: {
+		// 			displayName: current_user.displayName
+		// 		}
+		// 	}, 
+		// 	log: {
+		// 		0: {
+		// 			type: 'Initial Log!'
+		// 		}
+		// 	},
+		// 	nodes: {
+		// 		0: {
+		// 			type: 'Initial Event!'
+		// 		}
+		// 	}
+
+		// };
+
+		// var refKey = module.firebaseRef.push(newSession);
+
+		// console.log('Firebase Key:' + refKey.key);
+
+		console.log('Create sessionID as cookie');
+		console.log('===================');
+
 	}
+};
+
+module.postBinding = function() {
+	console.log('Session Start - Variable / Cookie Check');
+		// var u = firebase.auth().currentUser;
+		// // var c = null
+		// $.when(u, c).done(function (user, campaign) {
+		// // console.log('=====================');
+		// console.log('User: ' + user ); // v1 is system data
+		// //    console.log('System data: '); // v1 is system data
+		//    // console.log(v1 ); // v1 is system data
+		// //    console.log('Alliance data: '); // v2 is alliance data
+		//    // console.log(v2); // v2 is alliance data
+		// //    console.log('Passed Data: '); // v3 is passed in data
+		//    // console.log(v3); // v3 is passed in data
+		//    // var d = new Date(v3.start_time);
+		// // Draw Create Modal Card
+		// // Currently Start button is directing to Example.html
+	// });
 };
 
