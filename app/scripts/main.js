@@ -374,7 +374,6 @@ module.startCampaignTool = function(campaingId) {
 		var d1 = current_user;
 		console.log('Campaign ID: ' + campaingId);
 
-
 		var d2 = $.ajax({url: 'https://esi.tech.ccp.is/latest/sovereignty/campaigns/?datasource=tranquility', success: function(result){
 			console.log('Ajax');
 			console.log('Find Result:' + campaingId);
@@ -384,7 +383,7 @@ module.startCampaignTool = function(campaingId) {
 		console.log('Campaign Data: ' + d2);
 		console.log('Create Firebase Object for new Event');
 
-		$.when(d1, d2, d3).then(function (v1, v2, v3) {
+		$.when(d1, d2).then(function (v1, v2) {
 		// console.log('=====================');
 		// console.log('index: ' + index ); // v1 is system data
 		//    console.log('System data: '); // v1 is system data
@@ -396,53 +395,93 @@ module.startCampaignTool = function(campaingId) {
 		// var d = new Date(v3.start_time);
 		// Draw Create Modal Card
 		// Currently Start button is directing to Example.html
-
 		var resultPush = [];
-			for (var i = v2[0].length - 1; i >= 0; i--) {
+		for (var i = v2[0].length - 1; i >= 0; i--) {
 				// console.log('Campaign ID: ' + i + ' | ' + v2[0][i].campaign_id);
 				if (campaingId === v2[0][i].campaign_id) {
 					resultPush.push(v2[0][i]);
 					// console.log('Campaign ID: Match');
 				}
 			}
-		var a2 = resultPush[0];
+			var a2 = resultPush[0];
 		// console.log('current Campaign: ' + a2);
+		
 
-		var newSession = {
-			data: { 
-				creatingUser: v1.uid,
-				currentOwner: v1.uid, 
-				campaingId: a2.campaign_id,
-				attackersScore: a2.attackers_score,
-				defenderScore: a2.defender_score,
-				constellationId: a2.constellation_id,
-				defenderId: a2.defender_id,
-				eventType: a2.event_type,
-				solarSystem_id: a2.solar_system_id,
-				startTime: a2.start_time,
-				structureId: a2.structure_id
-				}, 
+		var a3 = $.ajax({url: 'https://esi.tech.ccp.is/latest/universe/systems/' + a2.solar_system_id + '/?datasource=tranquility', success: function(result){
+			console.log('Ajax');
+			// console.log('Results: ' + result);
+		}});
 
-				users: {
-					[v1.uid]: {
-						displayName: v1.displayName
+		var a4 = $.ajax({url: 'https://esi.tech.ccp.is/latest/alliances/' + a2.defender_id + '/', success: function(result){
+			console.log('Ajax');
+			// console.log('Results: ' + result);
+		}});
+
+
+		var a5 = $.ajax({url: 'https://esi.tech.ccp.is/latest/universe/constellations/' + a2.constellation_id + '/', success: function(result){
+			console.log('Ajax');
+			console.log('Results: ' + result);
+		}});
+
+		var constPush = [];
+
+		$.when(a5).then(function (v5) {
+
+			for (var i = v5.systems.length - 1; i >= 0; i--) {
+				$.ajax({url: 'https://esi.tech.ccp.is/latest/universe/systems/' + v5.systems[i] + '/?datasource=tranquility', success: function(result){
+					console.log('Ajax');
+					console.log('Results: ' + result);
+					constPush.push(result.name);
+				}});
+			}
+
+
+			$.when(v1, a2, a3, a4, a5, constPush).then(function (v1, v2, v3, v4, v5, v6) {
+
+				var newSession = {
+					data: { 
+						creatingUser: v1.uid,
+						currentOwner: v1.uid, 
+						campaingId: v2.campaign_id,
+						attackersScore: v2.attackers_score,
+						defenderScore: v2.defender_score,
+						constellationId: v2.constellation_id,
+						defenderId: v2.defender_id,
+						defenderName: v4[0].name,
+						defenderTicker: v4[0].ticker,
+						eventType: v2.event_type,
+						solarSystem_id: v2.solar_system_id,
+						solarSystem_name: v3[0].name,
+						startTime: v2.start_time,
+						structureId: v2.structure_id,
+						constellationList: v6
+					}, 
+
+					users: {
+						[v1.uid]: {
+							displayName: v1.displayName
+						}
+					}, 
+					log: {
+						0: {
+							type: 'Initial Log!'
+						}
+					},
+					nodes: {
+						0: {
+							type: 'Initial Event!'
+						}
 					}
-				}, 
-				log: {
-					0: {
-						type: 'Initial Log!'
-					}
-				},
-				nodes: {
-					0: {
-						type: 'Initial Event!'
-					}
-				}
 
-			};
-			var refKey = module.firebaseRef.push(newSession);
+				};
+				var refKey = module.firebaseRef.push(newSession);
 
-			console.log('Firebase Key:' + refKey.key);
+				console.log('Firebase Key:' + refKey.key);
+
+				console.log('Create sessionID as cookie');
+			});
+
+
 		});
 
 
@@ -450,36 +489,8 @@ module.startCampaignTool = function(campaingId) {
 
 
 
+	});
 
-
-		// var newSession = {
-		// 	data: { 
-		// 		creatingUser: current_user.uid,
-		// 		currentOwner: current_user.uid, 
-		// 		campaingId: campaingId }, 
-		// 	users: {
-		// 		[current_user.uid]: {
-		// 			displayName: current_user.displayName
-		// 		}
-		// 	}, 
-		// 	log: {
-		// 		0: {
-		// 			type: 'Initial Log!'
-		// 		}
-		// 	},
-		// 	nodes: {
-		// 		0: {
-		// 			type: 'Initial Event!'
-		// 		}
-		// 	}
-
-		// };
-
-		// var refKey = module.firebaseRef.push(newSession);
-
-		// console.log('Firebase Key:' + refKey.key);
-
-		console.log('Create sessionID as cookie');
 		console.log('===================');
 
 	}
