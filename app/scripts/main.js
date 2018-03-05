@@ -34,7 +34,7 @@ $(document).ready(function() {
 	module.bindings();
 	// $(document).foundation();
 	// module.postBinding();
-	// testData(1);
+	testData(1);
 });
 
 // ================================================
@@ -408,35 +408,43 @@ module.startCampaignTool = function(campaingId) {
 		
 
 		var a3 = $.ajax({url: 'https://esi.tech.ccp.is/latest/universe/systems/' + a2.solar_system_id + '/?datasource=tranquility', success: function(result){
-			console.log('Ajax');
+			// console.log('Ajax');
 			// console.log('Results: ' + result);
 		}});
 
 		var a4 = $.ajax({url: 'https://esi.tech.ccp.is/latest/alliances/' + a2.defender_id + '/', success: function(result){
-			console.log('Ajax');
+			// console.log('Ajax');
 			// console.log('Results: ' + result);
 		}});
 
 
 		var a5 = $.ajax({url: 'https://esi.tech.ccp.is/latest/universe/constellations/' + a2.constellation_id + '/', success: function(result){
-			console.log('Ajax');
-			console.log('Results: ' + result);
+			// console.log('Ajax');
+			// console.log('Results: ' + result);
 		}});
 
-		var constPush = [];
+		// var constPush = [];
 
 		$.when(a5).then(function (v5) {
 
+			var constPush = constPush || [];
+			var defferedPush = [];
 			for (var i = v5.systems.length - 1; i >= 0; i--) {
-				$.ajax({url: 'https://esi.tech.ccp.is/latest/universe/systems/' + v5.systems[i] + '/?datasource=tranquility', success: function(result){
-					console.log('Ajax');
-					console.log('Results: ' + result);
+				defferedPush[i] = $.ajax({url: 'https://esi.tech.ccp.is/latest/universe/systems/' + v5.systems[i] + '/?datasource=tranquility', success: function(result){
+					// console.log('Ajax');
+					// console.log('Results: ' + result.name);
 					constPush.push(result.name);
 				}});
 			}
 
 
-			$.when(v1, a2, a3, a4, a5, constPush).then(function (v1, v2, v3, v4, v5, v6) {
+
+			console.log(constPush);
+			console.log(defferedPush);
+			$.when(v1, a2, a3, a4, a5, constPush, defferedPush[v5.systems.length]).then(function (v1, v2, v3, v4, v5, v6, check) {
+			console.log(v6);
+			console.log('check:' + check);
+
 
 				var newSession = {
 					data: { 
